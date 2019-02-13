@@ -55,7 +55,7 @@ class State:
             self.parent = copy.parent
             self.action = copy.action
             
-            self.g = copy.g        
+            self.g = copy.g +1        
 
     def get_children(self) -> '[State, ...]':
         '''
