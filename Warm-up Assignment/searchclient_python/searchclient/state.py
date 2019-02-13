@@ -6,8 +6,8 @@ from action import ALL_ACTIONS, ActionType
 
 class State:
     _RNG = random.Random(1)
-    MAX_ROW = -1
-    MAX_COL = -1
+    MAX_ROW = None
+    MAX_COL = None
     WALLS = []
     GOALS = []
     
@@ -157,6 +157,9 @@ class State:
         #if self.goals != other.goals: return False
         #if self.walls != other.walls: return False
         return True
+
+    def __lt__(self, other):
+        return False # Mock for heap-structure
     
     def __repr__(self):
         lines = []
