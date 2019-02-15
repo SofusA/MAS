@@ -3,13 +3,14 @@ import sys
 
 from action import ALL_ACTIONS, ActionType
 
+from collections import defaultdict
 
 class State:
     _RNG = random.Random(1)
     MAX_ROW = None
     MAX_COL = None
-    WALLS = []
-    GOALS = []
+    WALLS = defaultdict(lambda: defaultdict(lambda: False))
+    GOALS = defaultdict(lambda: defaultdict(lambda: None))
     
     def __init__(self, copy: 'State' = None):
         '''
@@ -34,7 +35,7 @@ class State:
             self.agent_col = None
             
             #self.walls = []
-            self.boxes = []
+            self.boxes = defaultdict(lambda: defaultdict(lambda: None))
             #self.goals = []
             #self.walls = [[False for _ in range(State.MAX_COL)] for _ in range(State.MAX_ROW)]
             #self.boxes = [[None for _ in range(State.MAX_COL)] for _ in range(State.MAX_ROW)]
@@ -49,13 +50,18 @@ class State:
             self.agent_col = copy.agent_col
             
             #self.walls = [row[:] for row in copy.walls]
-            self.boxes = [row[:] for row in copy.boxes]
+            self.boxes = defaultdict(lambda: defaultdict(lambda: None))
+            for row in copy.boxes.keys():
+                for col in copy.boxes[row].keys():
+                    b = copy.boxes[row][col]
+                    if b:
+                        self.boxes[row][col] = b
             #self.goals = [row[:] for row in copy.goals]
             
             self.parent = copy.parent
             self.action = copy.action
             
-            self.g = copy.g +1        
+            self.g = copy.g + 1
 
     def get_children(self) -> '[State, ...]':
         '''
@@ -142,7 +148,8 @@ class State:
             _hash = 1
             _hash = _hash * prime + self.agent_row
             _hash = _hash * prime + self.agent_col
-            _hash = _hash * prime + hash(tuple(tuple(row) for row in self.boxes))
+            coordinates = [(key_x, key_y, self.boxes[key_x][key_y]) for key_x in self.boxes.keys() for key_y in self.boxes[key_x].keys() if self.boxes[key_x][key_y] is not None]
+            _hash = _hash * prime + hash(tuple(coordinates))
             #_hash = _hash * prime + hash(tuple(tuple(row) for row in self.goals))
             #_hash = _hash * prime + hash(tuple(tuple(row) for row in self.walls))
             self._hash = _hash
@@ -153,7 +160,9 @@ class State:
         if not isinstance(other, State): return False
         if self.agent_row != other.agent_row: return False
         if self.agent_col != other.agent_col: return False
-        if self.boxes != other.boxes: return False
+        for row in set(list(self.boxes.keys()) + list(other.boxes.keys())):
+            for col in set(list(self.boxes[row].keys()) + list(other.boxes[row].keys())):
+                if self.boxes[row][col] != other.boxes[row][col]: return False
         #if self.goals != other.goals: return False
         #if self.walls != other.walls: return False
         return True

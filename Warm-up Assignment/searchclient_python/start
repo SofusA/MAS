@@ -1,3 +1,3 @@
 #! /bin/bash
 
-java -jar ../server.jar -l ../levels/SAsoko3_64.lvl -c "python searchclient/searchclient.py --max-memory 2048 -greedy" -g 500 -t 300
+java -jar ../server.jar -l ../levels/SAsoko3_32 -c "python searchclient/searchclient.py --max-memory 2048 -greedy" -g 150 -t 300

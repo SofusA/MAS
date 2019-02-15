@@ -24,11 +24,7 @@ class SearchClient:
             self.initial_state = State()
             row = 0
             while line:
-                # Inialize data structures
                 cols = len(line.rstrip())
-                State.WALLS += [[False for _ in range(cols)]]
-                self.initial_state.boxes += [[None for _ in range(cols)]]
-                State.GOALS += [[None for _ in range(cols)]]
                 # parse line
                 for col, char in enumerate(line):
                     if char == '+': State.WALLS[row][col] = True
